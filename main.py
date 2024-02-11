@@ -433,14 +433,14 @@ class Game_Tanks:
             self.Tank1.init_fisic(mode="kl")
             for i in self.N_tanks:
                 i.init_fisic(mode="kl")
-                i.init_move(pg.key.get_pressed()[pg.K_TAB],
+                i.init_move(fl_fire=pg.key.get_pressed()[pg.K_TAB],
                             fl_right=pg.key.get_pressed()[pg.K_d],
                             fl_lelf=pg.key.get_pressed()[pg.K_a],
                             fl_down=pg.key.get_pressed()[pg.K_s],
                             fl_up=pg.key.get_pressed()[pg.K_w])
                 i.enemy = self.Tank1
                 i.update_direction()
-            if random.randint(0, 1000) > 997:
+            if random.randint(0, 1000) > 897:
                 set_game.bonus_list.append(Invulnerability_Bonus((random.randint(0, 860), random.randint(0, 860))))
                 # self.window.blit(pg.image.load("Pause or You WIN or You DEAD background.png"),
                 # (0, Settings_game().screen_dimensions[1] / 2 - 191 / 2))
@@ -650,10 +650,10 @@ class Game_Tanks:
             pg.init()
             base_miniwin_x_and_y = [i // 2 - miniwin.get_size()[n] // 2 for n, i in
                                     enumerate(pg.display.get_window_size())]
-            self.IN_MENU_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 64, base_miniwin_x_and_y[1] + 175),
+            self.IN_MENU_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 108, base_miniwin_x_and_y[1] + 175),
                                                pg.image.load(r"mini_windows/IN_MENU_BUTTTON.png"),
                                                lambda parent: self.__init__())
-            self.REPLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 164, base_miniwin_x_and_y[1] + 175),
+            self.REPLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 200, base_miniwin_x_and_y[1] + 175),
                                               pg.image.load(r"mini_windows/REPLAY_BUTTON.png"),
                                               lambda parent: self.start_game(self.lvl, parent=parent))
             while True:
@@ -745,8 +745,8 @@ class Game_Tanks:
                                               pg.image.load(r"mini_windows/REPLAY_BUTTON.png"),
                                               lambda parent: self.start_game(self.lvl, parent=parent))
             self.PLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 248, base_miniwin_x_and_y[1] + 96),
-                                                 pg.image.load(r"mini_windows/NEXT_PLAY_BUTTON.png"),
-                                                 lambda parent: self.start_game(self.lvl + 1, parent=parent))
+                                                 pg.image.load(r"mini_windows/PLAY_BUTTON.png"),
+                                                 lambda parent: None)
             while p:
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
@@ -770,7 +770,11 @@ class Game_Tanks:
                                 i.run_lvl = True
                     self.IN_MENU_BUTTON.click_or_not_click(event.type)
                     self.REPLAY_BUTTON.click_or_not_click(event.type)
-                    self.PLAY_BUTTON.click_or_not_click(event.type)
+                    if self.PLAY_BUTTON.click_or_not_click(event.type):
+                        p = False
+                        for i in self.N_tanks:
+                            i.run_lvl = True
+
                 self.window.blit(miniwin, base_miniwin_x_and_y)
                 self.IN_MENU_BUTTON.draw(pg.display.get_surface())
                 self.REPLAY_BUTTON.draw(pg.display.get_surface())
