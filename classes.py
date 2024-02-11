@@ -286,6 +286,7 @@ class Tanks:
         self.im_t = im
         self.speed = speed
         self.health = health
+        self.max_health = health
         self.bullet_aktiv = False
         self.bullet = 0
         self.damade = damade
@@ -294,7 +295,7 @@ class Tanks:
         self.go_to = (None, lambda: None)
         pygame.time.set_timer(self.BUMEVENTTYPE, 20)
         self.bum_event_timer = 0
-
+        self.invulnerability = False
         self.expl = Explosion(self, self.x_and_y, pg.display.get_surface())
 
     # ф-ю для опроса сети стороны движения
@@ -321,10 +322,8 @@ class Tanks:
 
     # проверка, иничтожен ли танк
     def is_live(self):
-        if self.health <= 0:
-            pass
+        if self.health <= 0 and not self.invulnerability:
             pg.mixer.Sound(r"ogg/buh.ogg").play()
-
         return not self.health <= 0
 
     # метод для проверки куда можно ходить,
@@ -345,12 +344,11 @@ class Tanks:
         if (self.go_to[0] == 2 or self.go_to[0] == 3) and abs(
                 self.x_and_y[0] - self.enemy.x_and_y[0]) < self.speed + 1 and self.x_and_y[0] != self.enemy.x_and_y[0]:
             self.x_and_y = (self.enemy.x_and_y[0], self.x_and_y[1])
-            print("#%@")
         elif (self.go_to[0] == 0 or self.go_to[0] == 1) and abs(
                 self.x_and_y[1] - self.enemy.x_and_y[1]) < self.speed and self.x_and_y[1] != self.enemy.x_and_y[1]:
             self.x_and_y = (self.x_and_y[0], self.enemy.x_and_y[1])
         else:
-            self.init_move(fl_fire=(side == 4),fl_right=(side == 3), fl_lelf=(side == 2), fl_down=(side == 1),fl_up=(side == 0))
+            self.init_move(fl_fire=(side == 4), fl_right=(side == 3), fl_lelf=(side == 2), fl_down=(side == 1), fl_up=(side == 0))
         return side
 
     def return_side_go(self):
@@ -612,7 +610,7 @@ class Tanks:
                 set_game.list_tanks_and_blocks.remove(self)
             self.expl.start(self.x_and_y)
             self.is_live = lambda: False
-            self.init_move = lambda p, fl_right=pg.key.get_pressed()[pg.K_RIGHT], fl_lelf=pg.key.get_pressed()[pg.K_LEFT], fl_down=pg.key.get_pressed()[pg.K_DOWN], fl_up=pg.key.get_pressed()[pg.K_UP], fl_fire=pg.key.get_pressed()[pg.K_SPACE]: None
+            self.init_move = lambda fl_right=pg.key.get_pressed()[pg.K_RIGHT], fl_lelf=pg.key.get_pressed()[pg.K_LEFT], fl_down=pg.key.get_pressed()[pg.K_DOWN], fl_up=pg.key.get_pressed()[pg.K_UP], fl_fire=pg.key.get_pressed()[pg.K_SPACE]: None
 
     def get_data(self, mode="kl"):
         if mode == "kl":
@@ -722,27 +720,59 @@ class Bonus:
 
 
 class Invulnerability_Bonus(Bonus):
-    def __init__(self, x_and_y):
+    def __init__(self, x_and_y, time_=10):
         super().__init__(x_and_y, img=pg.transform.scale(pg.image.load(r"fragments\fragment_7_16.png"),
                                                          [set_game.delta_tanks_spr] * 2))
         self.eff_start = False
-        self.time = 8000000
+        self.time = time_
 
     def drow(self, window: pg.Surface):
         if self.img != None:
             window.blit(self.img, self.x_and_y)
         if self.eff_start:
-            self.invulnerability()
-            print("invulnerability")
+            if self.invulnerability():
+                window.blit(pg.image.load(r"fragments\fragment_9_16.png"), self.x_and_y)
+
+
 
     def effect(self, object: Tanks):
         self.h = object.health
         self.tank = object
         self.eff_start = True
+        self.time = time.time() + self.time
 
     def invulnerability(self):
-        self.tank.is_live = lambda: True
-        self.tank.health = self.h
+        if self.time > time.time():
+            self.tank.health = self.h
+            self.tank.invulnerability = True
+            return True
+        self.tank.invulnerability = False
+        return False
+
+
+class Heal_bonus(Bonus):
+    def __init__(self, x_and_y, heal=10):
+        super().__init__(x_and_y, img=pg.transform.scale(pg.image.load(r"fragments\fragment_9_18.png"),
+                                                         [set_game.delta_tanks_spr] * 2))
+        self.eff_start = False
+        self.heal = heal
+
+    def drow(self, window: pg.Surface):
+        if self.img != None:
+            window.blit(self.img, self.x_and_y)
+        if self.eff_start:
+            self.give_heal()
+
+    def effect(self, object: Tanks):
+        self.h = object.health
+        self.tank = object
+        self.eff_start = True
+        self.time = time.time() + self.time
+
+    def give_heal(self):
+        self.tank.health += self.heal
+        if self.tank.health + self.heal > self.tank.max_health:
+            self.tank.health = self.tank.max_health
 
 
 class Explosion:
