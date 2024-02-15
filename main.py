@@ -12,7 +12,12 @@ from neiral_network_class import neuralNetwork
 
 class Game_Tanks:
     def __init__(self, ):
+        # настройки экрана
+        pg.display.set_caption("TANKS")
+        pg.display.set_icon(pg.image.load("Tank_im/Icon_tank1_u.png"))
+
         self.Tk_root = Tk()
+        self.Tk_root.quit()
 
         def excepthook(exc_type, exc_value, exc_tb):
             tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
@@ -89,11 +94,14 @@ class Game_Tanks:
                 if not self.user_max_lvl + 1 < lvl_num:
                     self.levels_buttons.append(Push_Buttons((_i * 90 + 10, i * 65 + 300), pg.transform.scale(
                         pg.image.load(r"Buttons_im\LEVEL_BUTTON.png"), (80, 60)), self.start_game, text=str(lvl_num),
-                                                            args=(lvl_num), blocking=bool(self.user_max_lvl + 1 < lvl_num)))
+                                                            args=(lvl_num),
+                                                            blocking=bool(self.user_max_lvl + 1 < lvl_num)))
                 else:
                     self.levels_buttons.append(Push_Buttons((_i * 90 + 10, i * 65 + 300), pg.transform.scale(
-                        pg.image.load(r"Buttons_im\BLOCKED_LEVEL_BUTTON.png"), (80, 60)), self.start_game, text=str(lvl_num),
-                                                            args=(lvl_num), blocking=bool(self.user_max_lvl + 1 < lvl_num)))
+                        pg.image.load(r"Buttons_im\BLOCKED_LEVEL_BUTTON.png"), (80, 60)), self.start_game,
+                                                            text=str(lvl_num),
+                                                            args=(lvl_num),
+                                                            blocking=bool(self.user_max_lvl + 1 < lvl_num)))
 
         while self.run_s:
             self.about_tank = [self.about_font.render(f'{self.tank_im.name}', True,
@@ -122,7 +130,8 @@ class Game_Tanks:
             pg.draw.rect(settings_window, (255, 127, 39), pg.Rect(25, 140,
                                                                   (self.WINDOW_SETTINGS_SISE[0] // 2) - 230, 105), 4,
                          15)
-            pg.draw.line(settings_window, (255, 127, 39), (25, 175), ((self.WINDOW_SETTINGS_SISE[0] // 2) - 210, 175), 4)
+            pg.draw.line(settings_window, (255, 127, 39), (25, 175), ((self.WINDOW_SETTINGS_SISE[0] // 2) - 210, 175),
+                         4)
             coins_str = str(" " * (7 - len(str(self.user_coins))) + str(self.user_coins))
             max_lxl_str = str(" " * (4 - len(str(self.user_max_lvl))) + str(self.user_max_lvl))
             skill = str(" " * (4 - len(str(self.user_skill))) + str(self.user_skill))
@@ -130,7 +139,8 @@ class Game_Tanks:
             self.user_max_lvl_lab = self.status_fond.render(f"Макс. уровень:{max_lxl_str}", True, (180, 0, 0))
             self.user_skill_lib = self.status_fond.render(f"Проф. уровень:{skill}", True, (180, 0, 0))
 
-            pg.draw.line(settings_window, (255, 127, 39), (25, 210), ((self.WINDOW_SETTINGS_SISE[0] // 2) - 210, 210),4)
+            pg.draw.line(settings_window, (255, 127, 39), (25, 210), ((self.WINDOW_SETTINGS_SISE[0] // 2) - 210, 210),
+                         4)
             self.in_left_button.draw(settings_window)
             self.in_right_button.draw(settings_window)
             self.tank_im = self.tanks_list[self.tank_index]((375, 50))
@@ -176,7 +186,6 @@ class Game_Tanks:
             except pg.error:
                 tkinter.messagebox.showwarning(title="Ошибка", message="Файл не поддерживаеться или повреждён")
 
-
     def init_(self):
         set_game.list_tanks_and_blocks = list()
         set_game.bonus_list = list()
@@ -184,9 +193,7 @@ class Game_Tanks:
         pg.mixer.music.load(r"ogg/intro.ogg")
         pg.mixer_music.play()
 
-        # настройки экрана
-        pg.display.set_caption("TANKS")
-        pg.display.set_icon(pg.image.load("Tank_im/Icon_tank1_u.png"))
+
         # # game_card = [["#", "#", "#", "#", "#", "#", "#", "#", "#", "#"],
         # #              ["#", " ", " ", " ", " ", " ", " ", " ", " ", "#"],
         # #              ["#", " ", " ", " ", " ", " ", " ", " ", " ", "#"],
@@ -284,7 +291,8 @@ class Game_Tanks:
             print(self.gamecard, 8)
         con.close()
         self.num_t = sum(lvl_setting)
-        self.v_settings = [Gnat_Tanks] * lvl_setting[0] + [Nimble_APC] * lvl_setting[1] + [Die_Hard_Tanks] * lvl_setting[2] + [Compromise_Tanks] * lvl_setting[3] + [Kettlebell_Tanks] * lvl_setting[4]
+        self.v_settings = [Gnat_Tanks] * lvl_setting[0] + [Nimble_APC] * lvl_setting[1] + [Die_Hard_Tanks] * \
+                          lvl_setting[2] + [Compromise_Tanks] * lvl_setting[3] + [Kettlebell_Tanks] * lvl_setting[4]
 
         self.init_()
         pg.mixer_music.stop()
@@ -440,7 +448,7 @@ class Game_Tanks:
                             fl_up=pg.key.get_pressed()[pg.K_w])
                 i.enemy = self.Tank1
                 i.update_direction()
-            if random.randint(0, 1000) > 897:
+            if random.randint(0, 1000) > 998:
                 set_game.bonus_list.append(Invulnerability_Bonus((random.randint(0, 860), random.randint(0, 860))))
                 # self.window.blit(pg.image.load("Pause or You WIN or You DEAD background.png"),
                 # (0, Settings_game().screen_dimensions[1] / 2 - 191 / 2))
@@ -563,7 +571,7 @@ class Game_Tanks:
                                               *self.vision_list,
                                               i.size_to_wall(),
                                               fire_may()],
-                                             (0.0, 0.0, 0.0, 0.0, 0.99))
+                                             (0.0, 0.0, 0.0, 0.0, 3.99))
                         # down
                         if i.return_pozitional()[0] in \
                                 range(self.Tank1.return_pozitional()[0], self.Tank1.return_pozitional()[0] + 48) and \
@@ -578,7 +586,7 @@ class Game_Tanks:
                                               *self.vision_list,
                                               i.size_to_wall(),
                                               fire_may()],
-                                             (0.0, 0.0, 0.0, 0, 0.99))
+                                             (0.0, 0.0, 0.0, 0, 3.99))
                         if i.return_pozitional()[1] in \
                                 range(self.Tank1.return_pozitional()[1], self.Tank1.return_pozitional()[1] + 48) and \
                                 i.return_pozitional()[0] - self.Tank1.return_pozitional()[0] > 0 and \
@@ -592,7 +600,7 @@ class Game_Tanks:
                                               *self.vision_list,
                                               i.size_to_wall(),
                                               fire_may()],
-                                             (0.0, 0.0, 0.0, 0, 0.99))
+                                             (0.0, 0.0, 0.0, 0, 3.99))
                         if i.return_pozitional()[1] in \
                                 range(self.Tank1.return_pozitional()[1], self.Tank1.return_pozitional()[1] + 48) and \
                                 i.return_pozitional()[0] - self.Tank1.return_pozitional()[0] < 0 and \
@@ -606,15 +614,15 @@ class Game_Tanks:
                                               *self.vision_list,
                                               i.size_to_wall(),
                                               fire_may()],
-                                             (0.0, 0.0, 0.0, 0, 0.99))
+                                             (0.0, 0.0, 0.0, 0, 3.99))
                         print(self.Tank1.x_and_y,
-                         i.x_and_y,
-                         i.direction(),
-                         i.return_side_go(),
-                         self.vision_list,
-                         i.size_to_wall(),
-                         fire_may(),
-                        (0.3, 0.3, 0, 0.3, 0))
+                              i.x_and_y,
+                              i.direction(),
+                              i.return_side_go(),
+                              self.vision_list,
+                              i.size_to_wall(),
+                              fire_may(),
+                              (0.3, 0.3, 0, 0.3, 0))
             for i in self.N_tanks:
                 x, y = self.Tank1.x_and_y
                 x2, y2 = i.x_and_y
@@ -632,7 +640,7 @@ class Game_Tanks:
     def check_stop_game(self, p=False):
         if self.Tank1.health <= 0:
             for n, i in enumerate(self.N_tanks):
-                i.neural_N : neuralNetwork
+                i.neural_N: neuralNetwork
                 i.neural_N.save_model(filename=rf"model{n}")
             print("Пройгрыш")
             self.ran = False
@@ -680,11 +688,13 @@ class Game_Tanks:
                 self.IN_MENU_BUTTON.draw(pg.display.get_surface())
                 self.REPLAY_BUTTON.draw(pg.display.get_surface())
                 pg.display.flip()
-        elif len([bool(i.health <= 0) for i in set_game.list_tanks_and_blocks if isinstance(i, (Tanks, Kettlebell_Tanks, Gnat_Tanks, Die_Hard_Tanks, Compromise_Tanks, Nimble_APC)) and i is not self.Tank1]) == 0:
+        elif len([bool(i.health <= 0) for i in set_game.list_tanks_and_blocks if isinstance(i, (
+        Tanks, Kettlebell_Tanks, Gnat_Tanks, Die_Hard_Tanks, Compromise_Tanks,
+        Nimble_APC)) and i is not self.Tank1]) == 0:
             self.ran = False
             print("Победа")
             for i in self.N_tanks:
-                    i.run_lvl = False
+                i.run_lvl = False
             self.time_lvl = time.time() - self.time_lvl
             # self.coin_take = time.
             if self.user_max_lvl < self.lvl:
@@ -699,11 +709,14 @@ class Game_Tanks:
             base_miniwin_x_and_y = [i // 2 - miniwin.get_size()[n] // 2 for n, i in
                                     enumerate(pg.display.get_window_size())]
             self.IN_MENU_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 64, base_miniwin_x_and_y[1] + 175),
-                                               pg.image.load(r"mini_windows/IN_MENU_BUTTTON.png"), lambda parent: self.__init__())
+                                               pg.image.load(r"mini_windows/IN_MENU_BUTTTON.png"),
+                                               lambda parent: self.__init__())
             self.REPLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 155, base_miniwin_x_and_y[1] + 175),
-                                               pg.image.load(r"mini_windows/REPLAY_BUTTON.png"), lambda parent: self.start_game(self.lvl ,parent=parent))
+                                              pg.image.load(r"mini_windows/REPLAY_BUTTON.png"),
+                                              lambda parent: self.start_game(self.lvl, parent=parent))
             self.NEXT_PLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 248, base_miniwin_x_and_y[1] + 175),
-                                               pg.image.load(r"mini_windows/NEXT_PLAY_BUTTON.png"), lambda parent: self.start_game(self.lvl + 1 ,parent=parent))
+                                                 pg.image.load(r"mini_windows/NEXT_PLAY_BUTTON.png"),
+                                                 lambda parent: self.start_game(self.lvl + 1, parent=parent))
             while True:
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
@@ -711,7 +724,6 @@ class Game_Tanks:
                         # sys.stderr.close()
                         pg.display.quit()
                         pg.mixer_music.stop()
-
 
                         # self.window.close()
                         pg.mixer_music.pause()
@@ -733,7 +745,7 @@ class Game_Tanks:
                 pg.display.flip()
         elif p:
             for i in self.N_tanks:
-                    i.run_lvl = False
+                i.run_lvl = False
             miniwin = pg.image.load(r"mini_windows/PAUSE_WINDOW.png")
             pg.init()
             base_miniwin_x_and_y = [i // 2 - miniwin.get_size()[n] // 2 for n, i in
@@ -745,8 +757,8 @@ class Game_Tanks:
                                               pg.image.load(r"mini_windows/REPLAY_BUTTON.png"),
                                               lambda parent: self.start_game(self.lvl, parent=parent))
             self.PLAY_BUTTON = Push_Buttons((base_miniwin_x_and_y[0] + 248, base_miniwin_x_and_y[1] + 96),
-                                                 pg.image.load(r"mini_windows/PLAY_BUTTON.png"),
-                                                 lambda parent: None)
+                                            pg.image.load(r"mini_windows/PLAY_BUTTON.png"),
+                                            lambda parent: None)
             while p:
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
@@ -754,7 +766,6 @@ class Game_Tanks:
                         # sys.stderr.close()
                         pg.display.quit()
                         pg.mixer_music.stop()
-
 
                         # self.window.close()
                         pg.mixer_music.pause()
@@ -780,7 +791,6 @@ class Game_Tanks:
                 self.REPLAY_BUTTON.draw(pg.display.get_surface())
                 self.PLAY_BUTTON.draw(pg.display.get_surface())
                 pg.display.flip()
-
 
 
 if __name__ == "__main__":
