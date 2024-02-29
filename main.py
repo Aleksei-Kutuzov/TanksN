@@ -268,14 +268,14 @@ class Game_Tanks:
         self.window = pg.display.set_mode(set_game.screen_dimensions)
         self.N_tanks = list()
         for k, i in enumerate(self.v_settings):
-            _i = i((56, 300,), type_t="e")
+            _i = i((48 * 1, 48 * 8,), type_t="e")
             self.N_tanks.append(_i)
             self.N_tanks[k].enemy = self.Tank1
         self.g_c_str.close()
         for i in self.N_tanks:
             i.vision_list = self.vision_list
             i.init_fisic(mode="no")
-            i.start_ev()
+            threading.Thread(target=i.start_set_path()).start()
 
     # функция отрисовки игровой карты
 
@@ -448,7 +448,7 @@ class Game_Tanks:
                             fl_up=pg.key.get_pressed()[pg.K_w])
                 i.enemy = self.Tank1
                 i.update_direction()
-            if random.randint(0, 1000) > 998:
+            if random.randint(0, 1000) > 0.999 * (self.time_lvl / (1000 * 6)) and len(set_game.bonus_list) <= 1:
                 set_game.bonus_list.append(Invulnerability_Bonus((random.randint(0, 860), random.randint(0, 860))))
                 # self.window.blit(pg.image.load("Pause or You WIN or You DEAD background.png"),
                 # (0, Settings_game().screen_dimensions[1] / 2 - 191 / 2))
@@ -463,7 +463,7 @@ class Game_Tanks:
             self.drow_card(self.window)
             self.Tank1.draw(self.window)
             self.N_tanks_metod_kall("draw", args=[self.window])
-            Train = True
+            Train = 2
             for i in self.N_tanks:
                 x, y = self.Tank1.x_and_y
                 x2, y2 = i.x_and_y
@@ -514,7 +514,7 @@ class Game_Tanks:
                                       i.size_to_wall(),
                                       fire_may()],
                                      (0.3, 0.3, 0.3, 0, 0))
-                if Train:
+                if Train == 1:
                     if y > y2 and i.sides != 1:  # and lst_num_bl[1]== 0:
                         #     print(1)
                         i.neural_N.train([*self.Tank1.x_and_y,
@@ -615,14 +615,54 @@ class Game_Tanks:
                                               i.size_to_wall(),
                                               fire_may()],
                                              (0.0, 0.0, 0.0, 0, 3.99))
-                        print(self.Tank1.x_and_y,
-                              i.x_and_y,
-                              i.direction(),
-                              i.return_side_go(),
-                              self.vision_list,
-                              i.size_to_wall(),
-                              fire_may(),
-                              (0.3, 0.3, 0, 0.3, 0))
+                elif Train == 2:
+                    i: Tanks
+                    p = i.get_to
+                    if p == 0:
+                        i.neural_N.train([*self.Tank1.x_and_y,
+                                          *i.x_and_y,
+                                          i.direction(),
+                                          *i.return_side_go(),
+                                          *self.vision_list,
+                                          i.size_to_wall(),
+                                          fire_may()],
+                                         (0.97, 0.01, 0.01, 0.01, 0))
+                    if p == 1:
+                        i.neural_N.train([*self.Tank1.x_and_y,
+                                          *i.x_and_y,
+                                          i.direction(),
+                                          *i.return_side_go(),
+                                          *self.vision_list,
+                                          i.size_to_wall(),
+                                          fire_may()],
+                                         (0.01, 0.97, 0.01, 0.01, 0))
+                    if p == 2:
+                        i.neural_N.train([*self.Tank1.x_and_y,
+                                          *i.x_and_y,
+                                          i.direction(),
+                                          *i.return_side_go(),
+                                          *self.vision_list,
+                                          i.size_to_wall(),
+                                          fire_may()],
+                                         (0.01, 0.01, 0.97, 0.01, 0))
+                    if p == 3:
+                        i.neural_N.train([*self.Tank1.x_and_y,
+                                          *i.x_and_y,
+                                          i.direction(),
+                                          *i.return_side_go(),
+                                          *self.vision_list,
+                                          i.size_to_wall(),
+                                          fire_may()],
+                                         (0.01, 0.01, 0.01, 0.97, 0))
+                    if p == 4:
+                        i.neural_N.train([*self.Tank1.x_and_y,
+                                          *i.x_and_y,
+                                          i.direction(),
+                                          *i.return_side_go(),
+                                          *self.vision_list,
+                                          i.size_to_wall(),
+                                          fire_may()],
+                                         (0.01, 0, 0.01, 0.01, 4.97))
             for i in self.N_tanks:
                 x, y = self.Tank1.x_and_y
                 x2, y2 = i.x_and_y
