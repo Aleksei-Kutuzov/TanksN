@@ -466,7 +466,7 @@ class Tanks:
             if i.return_pozitional()[0] in range(self.x_and_y[0] - set_game.delta_tanks_spr + 10,
                                                  self.x_and_y[0] + set_game.delta_tanks_spr - 10):
                 if i.return_pozitional()[1] \
-                        in range(self.x_and_y[1] - set_game.delta_tanks_spr, self.x_and_y[1]):
+                        in range(self.x_and_y[1] - set_game.delta_tanks_spr - 3, self.x_and_y[1]):
                     return 'stop'
         if self.return_pozitional()[1] > 0:
             # смена координат
@@ -481,7 +481,7 @@ class Tanks:
                 if i.return_pozitional()[1] - set_game.delta_tanks_spr \
                         in range(self.x_and_y[1] - set_game.delta_tanks_spr, self.x_and_y[1]):
                     return 'stop'
-        if self.return_pozitional()[1] < set_game.screen_dimensions[1] - set_game.delta_tanks_spr:
+        if self.return_pozitional()[1] < set_game.screen_dimensions[1] - set_game.delta_tanks_spr - 3:
             self.x_and_y = (self.x_and_y[0], self.x_and_y[1] + self.speed)
         return 'go'
 
@@ -492,23 +492,24 @@ class Tanks:
                     in range(i.return_pozitional()[1] - set_game.delta_tanks_spr + 10,
                              i.return_pozitional()[1] + set_game.delta_tanks_spr - 10):
                 if self.return_pozitional()[0] \
-                        in range(i.return_pozitional()[0], i.return_pozitional()[0] + set_game.delta_tanks_spr):
+                        in range(i.return_pozitional()[0], i.return_pozitional()[0] + set_game.delta_tanks_spr + 3):
                     return 'stop'
         if self.return_pozitional()[0] > 0:
             self.x_and_y = (self.x_and_y[0] - self.speed, self.x_and_y[1])
         return 'go'
 
     def right(self):
+        self.im_t = self.ims_tank[3]
         for i in self.list_tanks_and_blocks:
             if self.return_pozitional()[1] \
                     in range(i.return_pozitional()[1] - set_game.delta_tanks_spr + 10,
                              i.return_pozitional()[1] + set_game.delta_tanks_spr - 10):
                 if self.return_pozitional()[0] + set_game.delta_tanks_spr \
-                        in range(i.return_pozitional()[0], i.return_pozitional()[0] + set_game.delta_tanks_spr):
+                        in range(i.return_pozitional()[0], i.return_pozitional()[0] + set_game.delta_tanks_spr + 3):
                     return 'stop'
         if self.return_pozitional()[0] < set_game.screen_dimensions[0] - set_game.delta_tanks_spr:
             self.x_and_y = (self.x_and_y[0] + self.speed, self.x_and_y[1])
-        self.im_t = self.ims_tank[3]
+
         return 'go'
 
     def fire_will_successful(self):
@@ -639,55 +640,52 @@ class Tanks:
             self.x_and_y_in_pix = copy.copy(list(k1))
         k2 = tuple([(i + 48) // 48 for i in self.x_and_y])
         print(k1[0] * 48, k2[0] * 48)
-        if self.x_and_y[0] in range(k1[0] * 48 - 5, k2[0] * 48 + 5) and self.x_and_y[0] + 48 in range(k1[0] * 48 - 5,
-                                                                                                      k2[0] * 48 + 5):
+        if (k1[0] - 1) * 48 - 5 <= self.x_and_y[0] <= (k1[0] + 2) * 48 + 5:
             self.x_and_y_in_pix[0] = k1[0]
-        if self.x_and_y[1] in range(k1[1] * 48 - 5, k2[1] * 48 + 5) and self.x_and_y[1] + 48 in range(k1[1] * 48 - 5,
-                                                                                                      k2[1] * 48 + 5):
+        if (k1[1] - 1) * 48 - 5 <= self.x_and_y[1] <= (k1[1] + 2) * 48 + 5:
             self.x_and_y_in_pix[1] = k1[1]
         return self.x_and_y_in_pix
 
-    # def go_to_enemy(self):
-    #     while self.run_lvl:
-    #         start_point, end_point = self.return_pozition_in_pix(), self.enemy.return_pozition_in_pix()
-    #         try:
-    #             print(start_point, end_point, set_game.hardness_map)
-    #
-    #             path = astar(set_game.hardness_map, start_point, end_point)
-    #             print("Путь найден:", path)
-    #             self.path = path[1][::-1]
-    #             poz_in_pix = self.return_pozition_in_pix()
-    #             if self.path[1] < poz_in_pix[1]:
-    #                 self.up()
-    #             if self.path[1] > poz_in_pix[1]:
-    #                 self.down()
-    #             if self.path[0] < poz_in_pix[0]:
-    #                 self.left()
-    #             if self.path[0] > poz_in_pix[0]:
-    #                 self.right()
-    #             time.sleep(0.1)
-    #             if self.enemy.return_pozition_in_pix()[1] == self.return_pozition_in_pix()[1] and \
-    #                     self.enemy.return_pozition_in_pix()[0] > self.return_pozition_in_pix()[
-    #                 0] and self.direction() == 3:
-    #                 self.fire()
-    #             if self.enemy.return_pozition_in_pix()[1] == self.return_pozition_in_pix()[1] and \
-    #                     self.enemy.return_pozition_in_pix()[0] < self.return_pozition_in_pix()[
-    #                 0] and self.direction() == 2:
-    #                 self.fire()
-    #             if self.enemy.return_pozition_in_pix()[0] == self.return_pozition_in_pix()[0] and \
-    #                     self.enemy.return_pozition_in_pix()[1] > self.return_pozition_in_pix()[
-    #                 1] and self.direction() == 1:
-    #                 self.fire()
-    #             if self.enemy.return_pozition_in_pix()[0] == self.return_pozition_in_pix()[0] and \
-    #                     self.enemy.return_pozition_in_pix()[1] < self.return_pozition_in_pix()[
-    #                 1] and self.direction() == 0:
-    #                 self.fire()
-    #         except Exception as e:
-    #             print(e)
-    #             continue
+    def go_to_enemy(self):
+        while self.run_lvl:
+            start_point, end_point = self.return_pozition_in_pix(), self.enemy.return_pozition_in_pix()
+            print(f"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE{start_point, end_point}EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+            path = astar(set_game.hardness_map, start_point, end_point)
+            print("Путь найден:", path)
+            self.path = path[1][::-1]
+            poz_in_pix = self.return_pozition_in_pix()
+            if self.path[1] < poz_in_pix[1]:
+                self.get_to = 0
+            if self.path[1] > poz_in_pix[1]:
+                self.get_to = 1
+            if self.path[0] < poz_in_pix[0]:
+                self.get_to = 2
+            if self.path[0] > poz_in_pix[0]:
+                self.get_to = 3
+            if self.enemy.return_pozition_in_pix()[1] == self.return_pozition_in_pix()[1] and \
+                    self.enemy.return_pozition_in_pix()[0] > self.return_pozition_in_pix()[
+                0] and self.direction() == 3:
+                self.get_to = 4
+            if self.enemy.return_pozition_in_pix()[1] == self.return_pozition_in_pix()[1] and \
+                    self.enemy.return_pozition_in_pix()[0] < self.return_pozition_in_pix()[
+                0] and self.direction() == 2:
+                self.get_to = 4
+            if self.enemy.return_pozition_in_pix()[0] == self.return_pozition_in_pix()[0] and \
+                    self.enemy.return_pozition_in_pix()[1] > self.return_pozition_in_pix()[
+                1] and self.direction() == 1:
+                self.get_to = 4
+            if self.enemy.return_pozition_in_pix()[0] == self.return_pozition_in_pix()[0] and \
+                    self.enemy.return_pozition_in_pix()[1] < self.return_pozition_in_pix()[
+                1] and self.direction() == 0:
+                self.get_to = 4
 
-    def start_ev(self):
-        pass
+
+
+    def start_set_path(self):
+        go_to_en_th = threading.Thread(target=self.go_to_enemy)
+        go_to_en_th.start()
+        self.get_to = False
+        return
 
 class Bonus:
     def __init__(self, x_and_y, img):
@@ -773,6 +771,7 @@ class Heal_bonus(Bonus):
         self.tank.health += self.heal
         if self.tank.health + self.heal > self.tank.max_health:
             self.tank.health = self.tank.max_health
+        self.eff_start = False
 
 
 class Explosion:
